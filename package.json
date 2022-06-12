@@ -1,0 +1,30 @@
+{
+  "name": "bytelabs",
+  "version": "0.0.0",
+  "description": "Games, but on Twitch.",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc --project tsconfig.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ThatSkyz/bytelabs.git"
+  },
+  "author": "Skyz <skyz@likeswolves.com>",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/ThatSkyz/bytelabs/issues"
+  },
+  "homepage": "https://github.com/ThatSkyz/bytelabs#readme",
+  "devDependencies": {
+    "@types/node": "^17.0.42",
+    "@types/websocket": "^1.0.5",
+    "prettier": "^2.6.2",
+    "typescript": "^4.7.3"
+  },
+  "dependencies": {
+    "discord.js": "^13.8.0",
+    "puppeteer": "^14.3.0",
+    "tw-irc": "^6.1.3"
+  }
+}

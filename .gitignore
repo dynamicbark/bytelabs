@@ -1,0 +1,10 @@
+/dist
+/node_modules
+/config*.json
+/config.json
+/runtimeConfig*.json
+/runtimeConfig.json
+/.env*
+
+!/config.example.json
+!/.env.example

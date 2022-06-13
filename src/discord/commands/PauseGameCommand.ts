@@ -19,7 +19,6 @@ export class PauseGameCommand extends DiscordChatInputCommand {
       });
       return;
     }
-    runtimeData.selectedGame = '';
     toggleRetroArchPause();
     await commandInteraction.editReply({
       content: 'The game pause state has been toggled.',

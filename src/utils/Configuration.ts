@@ -4,6 +4,8 @@ export interface Configuration {
   discord: {
     token: string;
     setGlobalCommandsOnStart: boolean;
+    allowedRoles: string[];
+    allowedUsers: string[];
   };
   twitch: {
     username: string;

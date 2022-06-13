@@ -1,4 +1,4 @@
-import { Client, Interaction } from 'discord.js';
+import { Client, GuildMemberRoleManager, Interaction } from 'discord.js';
 import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { config } from '../../utils/Configuration';
 import { DiscordChatInputCommand } from '../types/DiscordChatInputCommand';
@@ -13,6 +13,7 @@ import { ListChatCommandsCommand } from '../commands/ListChatCommandsCommand';
 import { ToggleChatControlCommand } from '../commands/ToggleChatControlCommand';
 import { ViewChatCommandsCommand } from '../commands/ViewChatCommandCommand';
 import { SetChatCommandsCommand } from '../commands/SetChatCommandCommand';
+import { ListGamesCommand } from '../commands/ListGamesCommand';
 
 const globalChatInputCommandMap = new Map<string, DiscordChatInputCommand>();
 
@@ -24,6 +25,7 @@ function registerGlobalChatInputCommand(discordChatInputCommand: DiscordChatInpu
 registerGlobalChatInputCommand(new DeleteChatCommandsCommand());
 registerGlobalChatInputCommand(new DeleteGameCommand());
 registerGlobalChatInputCommand(new ListChatCommandsCommand());
+registerGlobalChatInputCommand(new ListGamesCommand());
 registerGlobalChatInputCommand(new PauseGameCommand());
 registerGlobalChatInputCommand(new SetChatCommandsCommand());
 registerGlobalChatInputCommand(new StartGameCommand());
@@ -43,6 +45,24 @@ export async function interactionCreateListener(interaction: Interaction): Promi
     if (!discordCommand) {
       return interaction.reply({
         content: 'The command requested was not found.',
+        ephemeral: true,
+      });
+    }
+    if (!interaction.inGuild()) {
+      return interaction.reply({
+        content: 'This command must be run in a guild.',
+        ephemeral: true,
+      });
+    }
+    let hasAllowedRole = false;
+    for (let i = 0; i < config.discord.allowedRoles.length; i++) {
+      if ((interaction.member.roles as GuildMemberRoleManager).cache.has(config.discord.allowedRoles[i])) {
+        hasAllowedRole = true;
+      }
+    }
+    if (!hasAllowedRole && !config.discord.allowedUsers.includes(interaction.user.id)) {
+      return interaction.reply({
+        content: 'You do not have access to this command.',
         ephemeral: true,
       });
     }

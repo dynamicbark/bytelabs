@@ -1,35 +1,65 @@
-import { Message } from 'discord.js';
-import { runtimeConfig } from '../../utils/RuntimeConfiguration';
-import { DiscordTextCommand, DiscordTextCommandData, replyToMessage } from '../types/DiscordTextCommand';
+import { ApplicationCommandOptionType } from 'discord-api-types/v10';
+import { CommandInteraction } from 'discord.js';
+import { runtimeConfig, runtimeData, saveRuntimeConfig } from '../../utils/RuntimeConfiguration';
+import { DiscordChatInputCommand } from '../types/DiscordChatInputCommand';
 
-export class ViewChatCommandCommand extends DiscordTextCommand {
+export class ViewChatCommandsCommand extends DiscordChatInputCommand {
   constructor() {
-    super('viewchatcommand');
+    super({
+      name: 'viewchatcommand',
+      description: 'View a chat command.',
+      options: [
+        {
+          type: ApplicationCommandOptionType.String,
+          name: 'name',
+          description: 'The command name',
+          required: true,
+        },
+        {
+          type: ApplicationCommandOptionType.String,
+          name: 'game',
+          description: 'A game name (will use currently selected game by default)',
+          required: false,
+        },
+      ],
+    });
   }
 
-  async handle(data: DiscordTextCommandData, message: Message): Promise<void> {
-    if (data.args.length < 1) {
-      await replyToMessage(message, {
-        content: 'Usage: viewchatcommand [command]',
+  async handle(commandInteraction: CommandInteraction): Promise<void> {
+    await commandInteraction.deferReply();
+    const gameOption = commandInteraction.options.getString('game', false);
+    if (runtimeData.selectedGame === '' && !gameOption) {
+      await commandInteraction.editReply({
+        content: 'There is no currently running game, you must specify a game name.',
       });
       return;
     }
-    const chatCommandName = data.args.join(' ').trim();
-    const chatCommandNames = Object.keys(runtimeConfig.chatCommands);
-    if (!chatCommandNames.includes(chatCommandName)) {
-      await replyToMessage(message, {
-        content: `The chat command specified does not exist.`,
+    const gameToUse = !gameOption ? runtimeData.selectedGame : gameOption;
+    if (!Object.keys(runtimeConfig.games).includes(gameToUse)) {
+      await commandInteraction.editReply({
+        content: 'The game specified does not exist.',
       });
       return;
     }
-    const chatCommand = runtimeConfig.chatCommands[chatCommandName];
-    const builtChatCommand = chatCommand
+    const nameOption = commandInteraction.options.getString('name', true);
+    // Validate and parse command data
+    if (!Object.keys(runtimeConfig.games[gameToUse].commands).includes(nameOption)) {
+      await commandInteraction.editReply({
+        content: 'The chat command specified does not exist.',
+      });
+      return;
+    }
+    saveRuntimeConfig();
+    const builtChatCommand = runtimeConfig.games[gameToUse].commands[nameOption]
       .map((value) => {
         return `${value.key},${value.delay}`;
       })
       .join(',');
-    await replyToMessage(message, {
-      content: `The chat command \`${chatCommandName.replace(/`/g, '')}\` is set to \`${builtChatCommand.replace(/`/g, '')}\`.`,
+    await commandInteraction.editReply({
+      content: `The chat command \`${nameOption.replace(/`/g, '')}\` for the game \`${gameToUse}\` is set to \`${builtChatCommand.replace(
+        /`/g,
+        ''
+      )}\`.`,
     });
   }
 }

@@ -5,6 +5,8 @@
 /runtimeConfig*.json
 /runtimeConfig.json
 /.env*
+/data
 
 !/config.example.json
+!/runtimeConfig.example.json
 !/.env.example

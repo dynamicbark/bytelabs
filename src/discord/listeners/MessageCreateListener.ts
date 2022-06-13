@@ -1,4 +1,4 @@
-import { Client, Message } from 'discord.js';
+import { Message } from 'discord.js';
 import { config } from '../../utils/Configuration';
 import { DeleteChatCommandCommand } from '../commands/DeleteChatCommandCommand';
 import { HelpCommand } from '../commands/HelpCommand';

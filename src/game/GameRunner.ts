@@ -27,9 +27,14 @@ export async function startGameHandler(): Promise<void> {
 
 export async function stopGameHandler(): Promise<void> {
   if (!browser) return;
+  if (!page) return;
+  await page.reload();
+  await setControlsText(createControlsList());
+  await setInfoText(runtimeConfig.info);
+  /*if (!browser) return;
   await browser.close();
   browser = undefined;
-  page = undefined;
+  page = undefined;*/
 }
 
 export async function loadROM(url: string): Promise<void> {
@@ -43,12 +48,20 @@ export async function loadROM(url: string): Promise<void> {
   await setInfoText(runtimeConfig.info);
   await page.evaluate(`window.loadROM('${url}');`);
   // Hit the play now button
+  tryClickPlay();
+}
+
+function tryClickPlay() {
   setTimeout(async () => {
-    const [playNowButton] = await page!.$x('//a[contains(text(), "Play Now")]');
-    await playNowButton.click();
-    setTimeout(async () => {
-      deleteTheRandomDiv();
-    }, 250);
+    try {
+      const [playNowButton] = await page!.$x('//a[contains(text(), "Play Now")]');
+      await playNowButton.click();
+      setTimeout(async () => {
+        deleteTheRandomDiv();
+      }, 250);
+    } catch (e) {
+      tryClickPlay();
+    }
   }, 250);
 }
 

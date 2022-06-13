@@ -2,6 +2,7 @@ import { Client as DiscordClient } from 'discord.js';
 import Client from 'tw-irc';
 import { messageCreateListener } from './discord/listeners/MessageCreateListener';
 import { readyListener } from './discord/listeners/ReadyListener';
+import { startGameHandler } from './game/GameRunner';
 import { setupTwitchHandler } from './twitch/TwitchHandler';
 import { config } from './utils/Configuration';
 
@@ -33,6 +34,7 @@ discordClient.on('ready', readyListener);
 async function main() {
   discordClient.login(config.discord.token);
   twitchClient.connect();
+  await startGameHandler();
 }
 
 main().catch((e) => {

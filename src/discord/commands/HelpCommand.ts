@@ -15,7 +15,7 @@ export class HelpCommand extends DiscordTextCommand {
         '`listchatcommands` - List the chat commands',
         '`load` - Load a NES ROM into the player',
         '`reset` - Reset the player',
-        '`setchatcommand [name] - [key,data,...]` - Set a chat command',
+        '`setchatcommand [name] - [key,delay,...]` - Set a chat command',
         '`start` - Start the Twitch bot',
         '`stop` - Stop the Twitch bot',
         '`viewchatcommand [name]` - View a chat command',

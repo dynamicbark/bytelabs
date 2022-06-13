@@ -1,5 +1,4 @@
 import { Message } from 'discord.js';
-import { startGameHandler } from '../../game/GameRunner';
 import { isCurrentlyRunning, setCurrentlyRunning } from '../../utils/Configuration';
 import { DiscordTextCommand, DiscordTextCommandData, replyToMessage } from '../types/DiscordTextCommand';
 
@@ -18,7 +17,7 @@ export class StartCommand extends DiscordTextCommand {
     await replyToMessage(message, {
       content: 'Starting Twitch bot.',
     });
-    await startGameHandler();
+    //await startGameHandler();
     setCurrentlyRunning(true);
   }
 }

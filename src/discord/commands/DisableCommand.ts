@@ -2,22 +2,21 @@ import { Message } from 'discord.js';
 import { isCurrentlyRunning, setCurrentlyRunning } from '../../utils/Configuration';
 import { DiscordTextCommand, DiscordTextCommandData, replyToMessage } from '../types/DiscordTextCommand';
 
-export class StartCommand extends DiscordTextCommand {
+export class DisableCommand extends DiscordTextCommand {
   constructor() {
-    super('start');
+    super('disable');
   }
 
   async handle(data: DiscordTextCommandData, message: Message): Promise<void> {
     if (isCurrentlyRunning()) {
       await replyToMessage(message, {
-        content: 'The Twitch bot is already running.',
+        content: 'The Twitch bot is not enabled.',
       });
       return;
     }
     await replyToMessage(message, {
-      content: 'Starting Twitch bot.',
+      content: 'Disabling Twitch bot.',
     });
-    //await startGameHandler();
-    setCurrentlyRunning(true);
+    setCurrentlyRunning(false);
   }
 }

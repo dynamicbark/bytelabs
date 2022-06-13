@@ -15,7 +15,7 @@ export class SendCommandCommand extends DiscordTextCommand {
           'Usage: sendcommand [key,delay,...]',
           'Example: `sendcommand a,500,right,500`',
           'The example command will press the A button and right arrow key for 500 ms each.',
-          'The valid keys are: `a`, `b`, `x`, `y`, `start`, `select`, `left`, `right`, `up`, `down`',
+          'The valid keys are: `a`, `b`, `x`, `y`, `start`, `select`, `right`, `left`, `up`, `down`, `l`, `r`, `z`, `l stick right`, `l stick left`, `l stick up`, `l stick down`',
         ].join('\n'),
       });
       return;

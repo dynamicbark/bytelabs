@@ -8,10 +8,10 @@ import { ResetCommand } from '../commands/ResetCommand';
 import { SendCommandCommand } from '../commands/SendCommandCommand';
 import { SetChatCommandCommand } from '../commands/SetChatCommandCommand';
 import { SetInfoCommand } from '../commands/SetInfoCommand';
-import { StartCommand } from '../commands/StartCommand';
-import { StopCommand } from '../commands/StopCommand';
+import { EnableCommand } from '../commands/EnableCommand';
 import { ViewChatCommandCommand } from '../commands/ViewChatCommandCommand';
 import { DiscordTextCommand } from '../types/DiscordTextCommand';
+import { DisableCommand } from '../commands/DisableCommand';
 
 const discordTextCommandMap = new Map<string, DiscordTextCommand>();
 
@@ -20,6 +20,8 @@ function registerDiscordTextCommand(discordTextCommand: DiscordTextCommand): voi
 }
 
 registerDiscordTextCommand(new DeleteChatCommandCommand());
+registerDiscordTextCommand(new DisableCommand());
+registerDiscordTextCommand(new EnableCommand());
 registerDiscordTextCommand(new HelpCommand());
 registerDiscordTextCommand(new ListChatCommandsCommand());
 registerDiscordTextCommand(new LoadCommand());
@@ -27,8 +29,6 @@ registerDiscordTextCommand(new ResetCommand());
 registerDiscordTextCommand(new SendCommandCommand());
 registerDiscordTextCommand(new SetChatCommandCommand());
 registerDiscordTextCommand(new SetInfoCommand());
-registerDiscordTextCommand(new StartCommand());
-registerDiscordTextCommand(new StopCommand());
 registerDiscordTextCommand(new ViewChatCommandCommand());
 
 export async function messageCreateListener(message: Message): Promise<void> {

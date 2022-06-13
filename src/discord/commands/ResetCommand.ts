@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
-import { resetConsole } from '../../game/GameRunner';
-import { isCurrentlyRunning } from '../../utils/Configuration';
+import { resetConsole, stopGameHandler } from '../../game/GameRunner';
+import { isCurrentlyRunning, setCurrentlyRunning } from '../../utils/Configuration';
 import { DiscordTextCommand, DiscordTextCommandData, replyToMessage } from '../types/DiscordTextCommand';
 
 export class ResetCommand extends DiscordTextCommand {
@@ -13,10 +13,12 @@ export class ResetCommand extends DiscordTextCommand {
       await replyToMessage(message, {
         content: 'The Twitch bot is not running.',
       });
+      return;
     }
     await replyToMessage(message, {
-      content: 'Resetting the player...',
+      content: 'Resetting the console.',
     });
-    await resetConsole();
+    setCurrentlyRunning(false);
+    await stopGameHandler();
   }
 }

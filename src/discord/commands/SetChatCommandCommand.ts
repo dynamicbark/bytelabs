@@ -15,7 +15,7 @@ export class SetChatCommandCommand extends DiscordTextCommand {
           'Usage: setchatcommand [command] - [key,delay,...]',
           'Example: `setchatcommand rump - a,500,right,500`',
           'The example command will press the A button and right arrow key for 500 ms each when `rump` is sent in chat.',
-          'The valid keys are: `a`, `b`, `x`, `y`, `start`, `select`, `left`, `right`, `up`, `down`',
+          'The valid keys are: `a`, `b`, `x`, `y`, `start`, `select`, `right`, `left`, `up`, `down`, `l stick right`, `l`, `r`, `z`, `l stick left`, `l stick up`, `l stick down`',
         ].join('\n'),
       });
       return;

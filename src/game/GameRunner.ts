@@ -56,9 +56,9 @@ function tryClickPlay() {
     try {
       const [playNowButton] = await page!.$x('//a[contains(text(), "Play Now")]');
       await playNowButton.click();
-      setTimeout(async () => {
+      /*setTimeout(async () => {
         deleteTheRandomDiv();
-      }, 250);
+      }, 250);*/
     } catch (e) {
       tryClickPlay();
     }
@@ -98,6 +98,47 @@ export async function deleteTheRandomDiv(): Promise<void> {
   });
 }
 
+export function lookupKeyName(input: string): string {
+  switch (input) {
+    case 'a':
+      return 'A';
+    case 'b':
+      return 'B';
+    case 'x':
+      return 'X';
+    case 'y':
+      return 'Y';
+    case 'start':
+      return 'Start';
+    case 'select':
+      return 'Select';
+    case 'right':
+      return 'Right';
+    case 'left':
+      return 'Left';
+    case 'up':
+      return 'Up';
+    case 'down':
+      return 'Down';
+    case 'l':
+      return 'L';
+    case 'r':
+      return 'R';
+    case 'z':
+      return 'Z';
+    case 'l stick right':
+      return 'L Stick Right';
+    case 'l stick left':
+      return 'L Stick Left';
+    case 'l stick up':
+      return 'L Stick Up';
+    case 'l stick down':
+      return 'L Stick Down';
+    default:
+      return '';
+  }
+}
+
 export function lookupKey(input: string): string {
   switch (input) {
     case 'a':
@@ -112,14 +153,28 @@ export function lookupKey(input: string): string {
       return 'Enter';
     case 'select':
       return 'Shift';
-    case 'left':
-      return 'ArrowLeft';
     case 'right':
       return 'ArrowRight';
+    case 'left':
+      return 'ArrowLeft';
     case 'up':
       return 'ArrowUp';
     case 'down':
       return 'ArrowDown';
+    case 'l':
+      return 'q';
+    case 'r':
+      return 'e';
+    case 'z':
+      return 'r';
+    case 'l stick right':
+      return 'h';
+    case 'l stick left':
+      return 'f';
+    case 'l stick up':
+      return 't';
+    case 'l stick down':
+      return 'g';
     default:
       return '';
   }

@@ -1,66 +1,100 @@
-import { Message } from 'discord.js';
-import { lookupKey, setControlsText } from '../../game/GameRunner';
-import { createControlsList, runtimeConfig, saveRuntimeConfig } from '../../utils/RuntimeConfiguration';
-import { DiscordTextCommand, DiscordTextCommandData, replyToMessage } from '../types/DiscordTextCommand';
+import { ApplicationCommandOptionType } from 'discord-api-types/v10';
+import { CommandInteraction } from 'discord.js';
+import { config } from '../../utils/Configuration';
+import { runtimeConfig, runtimeData, saveRuntimeConfig } from '../../utils/RuntimeConfiguration';
+import { DiscordChatInputCommand } from '../types/DiscordChatInputCommand';
 
-export class SetChatCommandCommand extends DiscordTextCommand {
+export class SetChatCommandsCommand extends DiscordChatInputCommand {
   constructor() {
-    super('setchatcommand');
+    super({
+      name: 'setchatcommand',
+      description: 'Set a chat command.',
+      options: [
+        {
+          type: ApplicationCommandOptionType.String,
+          name: 'name',
+          description: 'The command name',
+          required: true,
+        },
+        {
+          type: ApplicationCommandOptionType.String,
+          name: 'data',
+          description: 'The command data',
+          required: true,
+        },
+        {
+          type: ApplicationCommandOptionType.String,
+          name: 'game',
+          description: 'A game name (will use currently selected game by default)',
+          required: false,
+        },
+      ],
+    });
   }
 
-  async handle(data: DiscordTextCommandData, message: Message): Promise<void> {
-    if (data.args.length < 2) {
-      await replyToMessage(message, {
-        content: [
-          'Usage: setchatcommand [command] - [key,delay,...]',
-          'Example: `setchatcommand rump - a,500,right,500`',
-          'The example command will press the A button and right arrow key for 500 ms each when `rump` is sent in chat.',
-          'The valid keys are: `a`, `b`, `x`, `y`, `start`, `select`, `right`, `left`, `up`, `down`, `l stick right`, `l`, `r`, `z`, `l stick left`, `l stick up`, `l stick down`',
-        ].join('\n'),
+  async handle(commandInteraction: CommandInteraction): Promise<void> {
+    await commandInteraction.deferReply();
+    const gameOption = commandInteraction.options.getString('game', false);
+    if (runtimeData.selectedGame === '' && !gameOption) {
+      await commandInteraction.editReply({
+        content: 'There is no currently running game, you must specify a game name.',
       });
       return;
     }
-    const chatCommandFull = data.args.join(' ').split('-');
-    const chatCommandName = chatCommandFull[0].trim();
-    const chatCommandData = (chatCommandFull[1] || '').trim().split(',');
-    const parsedCommandData = [];
-    if (chatCommandData.length % 2 !== 0) {
-      await replyToMessage(message, {
+    const gameToUse = !gameOption ? runtimeData.selectedGame : gameOption;
+    if (!Object.keys(runtimeConfig.games).includes(gameToUse)) {
+      await commandInteraction.editReply({
+        content: 'The game specified does not exist.',
+      });
+      return;
+    }
+    // Validate command name
+    const nameOption = commandInteraction.options.getString('name', true);
+    if (nameOption.length > 32) {
+      await commandInteraction.editReply({
+        content: 'The chat command name must be shorter than 32 characters.',
+      });
+      return;
+    }
+    // Validate and parse command data
+    const dataOption = commandInteraction.options.getString('data', true);
+    const dataOptionSplit = dataOption.split(',');
+    if (dataOptionSplit.length % 2 !== 0) {
+      await commandInteraction.editReply({
         content: 'The command data is invalid. (Incorrect length)',
       });
       return;
     }
-    for (let i = 0; i < chatCommandData.length; i += 2) {
-      if (lookupKey(chatCommandData[i]) === '') {
-        await replyToMessage(message, {
-          content: `The command data is invalid. (The key \`${chatCommandData[i].replace(/`/g, '')}\` is not valid)`,
+    const validKeys = Object.keys(config.keymap);
+    const parsedCommandData = [];
+    for (let i = 0; i < dataOptionSplit.length; i += 2) {
+      if (!validKeys.includes(dataOptionSplit[i])) {
+        await commandInteraction.editReply({
+          content: `The command data is invalid. (The key \`${dataOptionSplit[i].replace(/`/g, '')}\` is not valid)`,
         });
         return;
       }
-      if (!chatCommandData[i + 1].match(/^\d{1,4}$/)) {
-        await replyToMessage(message, {
-          content: `The command data is invalid. (The duration \`${chatCommandData[i + 1].replace(/`/g, '')}\` is not valid)`,
+      if (!dataOptionSplit[i + 1].match(/^\d{1,4}$/)) {
+        await commandInteraction.editReply({
+          content: `The command data is invalid. (The duration \`${dataOptionSplit[i + 1].replace(/`/g, '')}\` is not valid)`,
         });
         return;
       }
-      const parsedDelay = parseInt(chatCommandData[i + 1], 10);
+      const parsedDelay = parseInt(dataOptionSplit[i + 1], 10);
       parsedCommandData.push({
-        key: chatCommandData[i],
+        key: dataOptionSplit[i],
         delay: parsedDelay,
       });
     }
-    runtimeConfig.chatCommands = {
-      ...runtimeConfig.chatCommands,
+    runtimeConfig.games[gameToUse].commands = {
+      ...runtimeConfig.games[gameToUse].commands,
       ...{
-        [chatCommandName]: parsedCommandData,
+        [nameOption]: parsedCommandData,
       },
     };
-    await setControlsText(createControlsList());
     saveRuntimeConfig();
-    await replyToMessage(message, {
-      content: `The chat command \`${chatCommandName.replace(/`/g, '')}\` has been set with the data \`${chatCommandFull[1]
-        .trim()
-        .replace(/`/g, '')}\`.`,
+    await commandInteraction.editReply({
+      content: `The chat command \`${nameOption.replace(/`/g, '')}\` for the game \`${gameToUse}\` has been set.`,
     });
   }
 }

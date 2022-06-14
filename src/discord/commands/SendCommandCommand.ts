@@ -3,6 +3,7 @@ import { CommandInteraction } from 'discord.js';
 import { config } from '../../utils/Configuration';
 import { runtimeData } from '../../utils/RuntimeConfiguration';
 import { DiscordChatInputCommand } from '../types/DiscordChatInputCommand';
+import { pressKeyCode } from '../../utils/Keyboard';
 
 export class SendCommandCommand extends DiscordChatInputCommand {
   constructor() {

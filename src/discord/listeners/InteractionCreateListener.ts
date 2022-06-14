@@ -14,6 +14,7 @@ import { ToggleChatControlCommand } from '../commands/ToggleChatControlCommand';
 import { ViewChatCommandsCommand } from '../commands/ViewChatCommandCommand';
 import { SetChatCommandsCommand } from '../commands/SetChatCommandCommand';
 import { ListGamesCommand } from '../commands/ListGamesCommand';
+import { SendCommandCommand } from '../commands/SendCommandCommand';
 
 const globalChatInputCommandMap = new Map<string, DiscordChatInputCommand>();
 
@@ -27,6 +28,7 @@ registerGlobalChatInputCommand(new DeleteGameCommand());
 registerGlobalChatInputCommand(new ListChatCommandsCommand());
 registerGlobalChatInputCommand(new ListGamesCommand());
 registerGlobalChatInputCommand(new PauseGameCommand());
+registerGlobalChatInputCommand(new SendCommandCommand());
 registerGlobalChatInputCommand(new SetChatCommandsCommand());
 registerGlobalChatInputCommand(new StartGameCommand());
 registerGlobalChatInputCommand(new StatusCommand());

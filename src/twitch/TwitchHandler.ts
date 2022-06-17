@@ -48,8 +48,9 @@ async function commandHandler(userId: string, messageContent: string): Promise<v
   // Ignore if it chat cannot control the game
   if (!runtimeData.canChatControl) return;
   // Check to see if the command exists
-  if (!Object.keys(activeChatCommands).includes(messageContent)) return;
-  const chatCommand = activeChatCommands[messageContent];
+  const messageContentToUse = (messageContent.split('!')[0] || '').trim();
+  if (!Object.keys(activeChatCommands).includes(messageContentToUse)) return;
+  const chatCommand = activeChatCommands[messageContentToUse];
   for (let i = 0; i < chatCommand.length; i++) {
     // @ts-ignore
     pressKeyCode(keycode.codes[config.keymap[chatCommand[i].key].key], chatCommand[i].delay);
